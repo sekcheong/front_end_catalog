@@ -23,7 +23,6 @@
 		377C50751A3810B400AE69E5 /* join.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C505D1A3810B400AE69E5 /* join.cpp */; };
 		377C50761A3810B400AE69E5 /* joinHT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C505E1A3810B400AE69E5 /* joinHT.cpp */; };
 		377C50771A3810B400AE69E5 /* load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C505F1A3810B400AE69E5 /* load.cpp */; };
-		377C50781A3810B400AE69E5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C50601A3810B400AE69E5 /* main.cpp */; };
 		377C50791A3810B400AE69E5 /* minirel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C50611A3810B400AE69E5 /* minirel.cpp */; };
 		377C507A1A3810B400AE69E5 /* page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C50621A3810B400AE69E5 /* page.cpp */; };
 		377C507B1A3810B400AE69E5 /* partition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 377C50631A3810B400AE69E5 /* partition.cpp */; };
@@ -79,7 +78,6 @@
 		377C505D1A3810B400AE69E5 /* join.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = join.cpp; path = src/join.cpp; sourceTree = SOURCE_ROOT; };
 		377C505E1A3810B400AE69E5 /* joinHT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = joinHT.cpp; path = src/joinHT.cpp; sourceTree = SOURCE_ROOT; };
 		377C505F1A3810B400AE69E5 /* load.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load.cpp; path = src/load.cpp; sourceTree = SOURCE_ROOT; };
-		377C50601A3810B400AE69E5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		377C50611A3810B400AE69E5 /* minirel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = minirel.cpp; path = src/minirel.cpp; sourceTree = SOURCE_ROOT; };
 		377C50621A3810B400AE69E5 /* page.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = page.cpp; path = src/page.cpp; sourceTree = SOURCE_ROOT; };
 		377C50631A3810B400AE69E5 /* partition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = partition.cpp; path = src/partition.cpp; sourceTree = SOURCE_ROOT; };
@@ -171,7 +169,6 @@
 				377C505D1A3810B400AE69E5 /* join.cpp */,
 				377C505E1A3810B400AE69E5 /* joinHT.cpp */,
 				377C505F1A3810B400AE69E5 /* load.cpp */,
-				377C50601A3810B400AE69E5 /* main.cpp */,
 				377C50611A3810B400AE69E5 /* minirel.cpp */,
 				377C50621A3810B400AE69E5 /* page.cpp */,
 				377C50631A3810B400AE69E5 /* partition.cpp */,
@@ -247,7 +244,6 @@
 				377C507B1A3810B400AE69E5 /* partition.cpp in Sources */,
 				377C50761A3810B400AE69E5 /* joinHT.cpp in Sources */,
 				377C50681A3810B400AE69E5 /* buf.cpp in Sources */,
-				377C50781A3810B400AE69E5 /* main.cpp in Sources */,
 				377C507D1A3810B400AE69E5 /* quit.cpp in Sources */,
 				377C50701A3810B400AE69E5 /* destroy.cpp in Sources */,
 				377C50711A3810B400AE69E5 /* error.cpp in Sources */,
