@@ -36,10 +36,8 @@ int main(int argc, char *argv[])
   }
 
   // create buffer manager
-  
   bufMgr = new BufMgr(100);
   
-
   Status status;
   // create heapfiles to hold the relcat and attribute catalogs
   status = createHeapFile("relcat");
@@ -47,6 +45,7 @@ int main(int argc, char *argv[])
     error.print(status);
     exit(1);
   }
+  
   status = createHeapFile("attrcat");
   if (status != OK) {
     error.print(status);
@@ -55,8 +54,10 @@ int main(int argc, char *argv[])
 
   // open relation and attribute catalogs
   relCat = new RelCatalog(status);
-  if (status == OK)
+  if (status == OK) {
     attrCat = new AttrCatalog(status);
+  }
+  
   if (status != OK) {
     error.print(status);
     exit(1);

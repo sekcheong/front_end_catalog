@@ -39,17 +39,17 @@ class SortedFile {
   typedef struct {
     string name;                        // name of run file
     HeapFileScan* inFile;               // ptr to input file
-    InsertFileScan* outFile;		// ptr to output file
+    InsertFileScan* outFile;            // ptr to output file
     int valid;                          // TRUE if recPtr has a record
     Record rec;
     RID rid;                            // RID of current record of run
     RID mark;
   } RUN;
 
-  vector<RUN> runs;                   // holds info about each sub-run
+  vector<RUN> runs;                     // holds info about each sub-run
 
-  HeapFile* hfile;                   // source file to sort
-  HeapFileScan* hfs;                   // source file to sort
+  HeapFile* hfile;                      // source file to sort
+  HeapFileScan* hfs;                    // source file to sort
   string fileName;                      // name of source file to sort
   Datatype type;                        // type of sort attribute
   int offset;                           // offset of sort attribute

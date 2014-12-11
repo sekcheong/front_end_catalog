@@ -3,7 +3,7 @@
 
 // structure declaration for a record identifier
 
-typedef struct RID{
+typedef struct RID {
     int  pageNo;
     int	 slotNo;
 };

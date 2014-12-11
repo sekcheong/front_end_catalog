@@ -23,13 +23,13 @@ extern AttrCatalog *attrCat;
 void UT_Quit(void)
 {
   // close relcat and attrcat
-
+  
   delete relCat;
   delete attrCat;
-
+  
   // delete bufMgr to flush out all dirty pages
-
+  
   delete bufMgr;
-
+  
   exit(1);
 }
