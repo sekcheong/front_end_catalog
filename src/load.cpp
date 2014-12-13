@@ -18,53 +18,63 @@ const Status UT_Load(const string & relation, const string & fileName)
   Status status;
   RelDesc rd;
   AttrDesc *attrs;
-  int attrCnt;
-  InsertFileScan * iFile;
-  int width = 0;
+  int attrCnt = 0;
   
   if (relation.empty() || fileName.empty() || relation == string(RELCATNAME)
       || relation == string(ATTRCATNAME))
     return BADCATPARM;
   
   // open Unix data file
-  
   int fd;
-  if ((fd = open(fileName.c_str(), O_RDONLY, 0)) < 0)
+  if ((fd = open(fileName.c_str(), O_RDONLY, 0)) < 0) {
     return UNIXERR;
+  }
   
   // get relation data
+  if ((status = relCat->getInfo(relation, rd)) != OK) return status;
   
+  // get attribute data
+  if ((status = attrCat->getRelInfo(rd.relName, attrCnt, attrs)) != OK)
+    return status;
   
+  // open data file
+  InsertFileScan iFile = InsertFileScan(rd.relName, status);
+  if (status!=OK) {
+    return status;
+  }
   
+  // compute width of tuple and open index files, if any
+  int width = 0;
+  for(int i = 0; i < attrCnt; i++) {
+    width += attrs[i].attrLen;
+  }
   
-  // start insertFileScan on relation
-  
-  
-  
-  
-  
-  
-  
-  
-  // allocate buffer to hold record read from unix file
+  // create a record for constructing the tuple
   char *record;
-  if (!(record = new char [width])) return INSUFMEM;
+  record = new char [width];
+  if (!record) return INSUFMEM;
   
-  int records = 0;
   int nbytes;
   Record rec;
-  
-  // read next input record from Unix file and insert it into relation
-  while((nbytes = read(fd, record, width)) == width) {
+  int records = 0;
+  while((nbytes = (int) read(fd, record, width)) == width) {
     RID rid;
     rec.data = record;
     rec.length = width;
-    if ((status = iFile->insertRecord(rec, rid)) != OK) return status;
+    status = iFile.insertRecord(rec, rid);
+    if (status!=OK) {
+      return status;
+    }
     records++;
   }
   
-  // close heap file and unix file
+  cout << "Number of records inserted: " << records << endl;
+  
+  // close heap file and data file
   if (close(fd) < 0) return UNIXERR;
+  
+  delete [] record;
+  free(attrs);
   
   return OK;
 }

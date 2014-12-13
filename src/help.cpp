@@ -32,10 +32,37 @@ const Status RelCatalog::help(const string & relation)
   RelDesc rd;
   AttrDesc *attrs;
   int attrCnt;
-
-  if (relation.empty()) return UT_Print(RELCATNAME);
-
-
-
+  
+  if (relation.empty()) {
+    return UT_Print(RELCATNAME);
+  }
+  
+  // get relation data
+  if ((status = getInfo(relation, rd)) != OK) {
+    return status;
+  }
+  
+  // get attribute data
+  if ((status = attrCat->getRelInfo(relation, attrCnt, attrs)) != OK) {
+    return status;
+  }
+  
+  // print relation information
+  
+  cout << "Relation name: "
+  << rd.relName << " ("
+  << rd.attrCnt << " attributes)" << endl;
+  
+  for(int i = 0; i < attrCnt; i++) {
+    Datatype t = (Datatype) attrs[i].attrType;
+    printf("%16.16s   %3d   %c   %3d\n",
+           attrs[i].attrName,
+           attrs[i].attrOffset,
+           (t == INTEGER ? 'i' : (t == FLOAT ? 'f' : 's')),
+           attrs[i].attrLen);
+  }
+  
+  free(attrs);
+  
   return OK;
 }

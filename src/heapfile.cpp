@@ -254,7 +254,8 @@ const Status HeapFileScan::endScan()
 
 HeapFileScan::~HeapFileScan()
 {
-  endScan();
+  Status  status = endScan();
+  assert(status==OK);
 }
 
 const Status HeapFileScan::markScan()
