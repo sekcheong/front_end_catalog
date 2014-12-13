@@ -46,7 +46,7 @@ const Status RelCatalog::addInfo(RelDesc & record)
   if (status != OK) return status;
   
   int len = (int)strlen(record.relName);
-  memset(&record.relName[len], 0, sizeof record.relName - len);
+  memset(&record.relName[len], 0, sizeof(record.relName) - len);
   Record rec;
   
   rec.data = &record;
@@ -55,7 +55,7 @@ const Status RelCatalog::addInfo(RelDesc & record)
   return status;
 }
 
-const Status RelCatalog::removeInfo(const string & relation)
+const Status RelCatalog::removeInfo(const string &relation)
 {
   
   RID rid;
@@ -135,9 +135,9 @@ const Status AttrCatalog::addInfo(AttrDesc & record)
   if (status != OK) return status;
   
   int len = (int) strlen(record.relName);
-  memset(&record.relName[len], 0, sizeof record.relName - len);
+  memset(&record.relName[len], 0, sizeof(record.relName) - len);
   len = (int) strlen(record.attrName);
-  memset(&record.attrName[len], 0, sizeof record.attrName - len);
+  memset(&record.attrName[len], 0, sizeof(record.attrName) - len);
   
   Record rec;
   rec.data = &record;

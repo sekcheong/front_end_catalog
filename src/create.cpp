@@ -75,4 +75,3 @@ const Status RelCatalog::createRel(const string & relation,
   if (status != OK) return status;
   return OK;
 }
---------------------
