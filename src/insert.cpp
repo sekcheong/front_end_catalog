@@ -1,6 +1,7 @@
 #include "catalog.h"
 #include "query.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 
 /*
  * Inserts a record into the specified relation.
@@ -9,7 +10,6 @@
  * 	OK on success
  * 	an error code otherwise
  */
-
 const Status QU_Insert(const string & relation,
                        const int attrCnt,
                        const attrInfo attrList[])
@@ -27,6 +27,7 @@ const Status QU_Insert(const string & relation,
     return status;
   }
   
+  // Get the information and relation information about the given relation
   status = relCat->getInfo(relation, relinfo);
   if (status != OK) {
     return status;
@@ -36,7 +37,8 @@ const Status QU_Insert(const string & relation,
   if (status != OK) {
     return status;
   }
-		// Find matching attrs, to get the lenth of the new record
+  
+  // Find matching attributes to get the length of the records
   for (int i = 0; i < attrLen; i++) {
     for (int j = 0; j < attrCnt; j++) {
       if (strcmp(attrinfo[i].attrName, attrList[j].attrName) == 0) {
@@ -45,34 +47,28 @@ const Status QU_Insert(const string & relation,
     }
   }
   
-  // Create array directly in record.
   record.data = (char*) malloc(len);
   record.length = len;
 		
   // Find each attrValue, get the value at a string, and put it into data.
-  for (int i = 0; i < attrCnt; i++){
-    for (int j = 0; j < attrLen; j++){
+  for (int i = 0; i < attrCnt; i++) {
+    for (int j = 0; j < attrLen; j++) {
       if (strcmp(attrList[i].attrName, attrinfo[j].attrName) == 0) {
         int type = attrinfo[j].attrType;
         if (type == INTEGER) {
-          int val = atoi((char*)attrList[i].attrValue);
-          memcpy((char*)record.data + attrinfo[j].attrOffset,
-                 &val, attrinfo[j].attrLen);
+          int v = atoi((char*)attrList[i].attrValue);
+          memcpy((char*)record.data + attrinfo[j].attrOffset, &v, attrinfo[j].attrLen);
         }
-        else if (type == FLOAT) {
-          float val = atof((char*)attrList[i].attrValue);
-          memcpy((char*)record.data + attrinfo[j].attrOffset,
-                 &val, attrinfo[j].attrLen);
+        else if (type == FLOAT)
+        {
+          float v = atof((char*)attrList[i].attrValue);
+          memcpy((char*)record.data + attrinfo[j].attrOffset, &v, attrinfo[j].attrLen);
         }
         else {
-          memcpy((char*)record.data + attrinfo[j].attrOffset,
-                 (char*)attrList[i].attrValue, attrinfo[j].attrLen - 1);
+          memcpy((char*)record.data + attrinfo[j].attrOffset, (char*)attrList[i].attrValue, attrinfo[j].attrLen - 1);
         }
       }
     }
   }
-  // Insert the record!
   return ifs.insertRecord(record, rid);
-  
 }
-

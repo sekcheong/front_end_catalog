@@ -1,8 +1,9 @@
 #include "catalog.h"
 #include "query.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-
-// forward declaration
+//forward declaration
 const Status ScanSelect(const string & result,
                         const int projCnt,
                         const AttrDesc projNames[],
@@ -11,14 +12,6 @@ const Status ScanSelect(const string & result,
                         const char *filter,
                         const int reclen);
 
-/*
- * Selects records from the specified relation.
- *
- * Returns:
- * 	OK on success
- * 	an error code otherwise
- */
-
 const Status QU_Select(const string & result,
                        const int projCnt,
                        const attrInfo projNames[],
@@ -26,7 +19,6 @@ const Status QU_Select(const string & result,
                        const Operator op,
                        const char *attrValue)
 {
-  // Qu_Select sets up things and then calls ScanSelect to do the actual work
   cout << "Doing QU_Select " << endl;
   
   Status status;
@@ -35,10 +27,8 @@ const Status QU_Select(const string & result,
   
   
   AttrDesc* projs = new AttrDesc[projCnt];
-  // Get info for all given projections
   for (int i = 0; i < projCnt; i++) {
-    status = attrCat->getInfo(projNames[i].relName,
-                              projNames[i].attrName, projs[i]);
+    status = attrCat->getInfo(projNames[i].relName, projNames[i].attrName, projs[i]);
     if (status != OK) {
       return status;
     }
@@ -56,40 +46,42 @@ const Status QU_Select(const string & result,
     reclen = reclen + projs[i].attrLen;
   }
   
-  // Get attrType as a string
+  int valI;
+  float valF;
   int type = attrDesc.attrType;
   if (type == INTEGER) {
-    int val = atoi(attrValue);
-    filter = (char *)&val;
+    valI = atoi(attrValue);
+    filter = (char *) &valI;
   }
   else if (type == FLOAT) {
-    float val = atof(attrValue);
-    filter = (char *)&val;
+    valF = atof(attrValue);
+    filter = (char *) &valF;
   }
   else {
     filter = attrValue;
   }
+  
   return ScanSelect(result, projCnt, projs, &attrDesc, op, filter, reclen);
-
 }
 
 
 const Status ScanSelect(const string & result,
                         const int projCnt,
                         const AttrDesc projNames[],
-                        const AttrDesc *attrDesc, 
-                        const Operator op, 
+                        const AttrDesc *attrDesc,
+                        const Operator op,
                         const char *filter,
                         const int reclen)
 {
   cout << "Doing HeapFileScan Selection using ScanSelect()" << endl;
+  
   Status status;
-  RID rid;
   Record outputRec;
   Record rec;
+  RID rid;
   
   // See if the relation is already in the DB
-  InsertFileScan ifs = InsertFileScan(result, status);
+  InsertFileScan resultRel = InsertFileScan(result, status);
   if (status != OK) {
     return status;
   }
@@ -99,12 +91,8 @@ const Status ScanSelect(const string & result,
   
   // Prepare to scan the heap!
   HeapFileScan hfs = HeapFileScan(projNames->relName, status);
-  if (status!=OK) {
-    return status;
-  }
   
-  status = hfs.startScan(attrDesc->attrOffset, attrDesc->attrLen,
-                         (Datatype)attrDesc->attrType, filter, op);
+  status = hfs.startScan(attrDesc->attrOffset, attrDesc->attrLen, (Datatype)attrDesc->attrType, filter, op);
   if (status != OK) {
     return status;
   }
@@ -115,17 +103,13 @@ const Status ScanSelect(const string & result,
     if (status != OK) {
       return status;
     }
-    
-    int off = 0;
+    int offset = 0;
     for (int i = 0; i < projCnt; i++) {
-      memcpy((char *)outputRec.data + off,
-             (char *)rec.data + projNames[i].attrOffset,
-             projNames[i].attrLen);
-      off = off + projNames[i].attrLen;
+      memcpy((char *)outputRec.data + offset, (char *)rec.data + projNames[i].attrOffset, projNames[i].attrLen);
+      offset += projNames[i].attrLen;
     }
     RID output;
-    status = ifs.insertRecord(outputRec, output);
+    status = resultRel.insertRecord(outputRec, output);
   }
-  
   return status;
 }

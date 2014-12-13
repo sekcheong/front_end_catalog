@@ -1,4 +1,5 @@
 #include "catalog.h"
+#include "stdlib.h"
 
 //
 // Destroys a relation. It performs the following steps:
@@ -30,12 +31,15 @@ const Status RelCatalog::destroyRel(const string & relation)
     return status;
   }
   
+  // destroy file
   status = destroyHeapFile(relation);
   if (status!=OK) {
     return status;
   }
+  
   return OK;
 }
+
 
 //
 // Drops a relation. It performs the following steps:
@@ -46,23 +50,24 @@ const Status RelCatalog::destroyRel(const string & relation)
 // 	OK on success
 // 	error code otherwise
 //
-
 const Status AttrCatalog::dropRelation(const string & relation)
 {
+  Status status;
+  AttrDesc *attrs;
+  
   if (relation.empty()) {
     return BADCATPARM;
   }
   
-  Status status;
-  AttrDesc *attrs;
-  int attrCnt, i;
-  
+  // find attribute info
+  int attrCnt;
   status = getRelInfo(relation, attrCnt, attrs);
   if (status!=OK) {
     return status;
   }
   
-  for(i = 0; i < attrCnt; i++) {
+  // delete entries from catalog
+  for (int i = 0; i < attrCnt; i++) {
     status = removeInfo(relation, attrs[i].attrName);
     if (status!=OK) {
       return status;
@@ -70,7 +75,6 @@ const Status AttrCatalog::dropRelation(const string & relation)
   }
   
   free(attrs);
+  
   return OK;
 }
-
-

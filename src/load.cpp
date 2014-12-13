@@ -18,51 +18,59 @@ const Status UT_Load(const string & relation, const string & fileName)
   Status status;
   RelDesc rd;
   AttrDesc *attrs;
-  int attrCnt = 0;
+  int attrCnt;
   
   if (relation.empty() || fileName.empty() || relation == string(RELCATNAME)
       || relation == string(ATTRCATNAME))
     return BADCATPARM;
   
   // open Unix data file
+  
   int fd;
   if ((fd = open(fileName.c_str(), O_RDONLY, 0)) < 0) {
     return UNIXERR;
   }
   
   // get relation data
-  if ((status = relCat->getInfo(relation, rd)) != OK) return status;
-  
-  // get attribute data
-  if ((status = attrCat->getRelInfo(rd.relName, attrCnt, attrs)) != OK)
-    return status;
-  
-  // open data file
-  InsertFileScan iFile = InsertFileScan(rd.relName, status);
+  status = relCat->getInfo(relation, rd);
   if (status!=OK) {
+    cerr << __FILE__ << "(" << __LINE__ << ") " << "Error calling relCat->getInfo()" << endl;
     return status;
   }
   
-  // compute width of tuple and open index files, if any
+  // get attribute data
+  status = attrCat->getRelInfo(rd.relName, attrCnt, attrs);
+  if (status!=OK) {
+    cerr << __FILE__ << "(" << __LINE__ << ") " << "Error calling attrCat->getRelInfo()" << endl;
+    return status;
+  }
+  
+  // open data file
+  InsertFileScan iFile = InsertFileScan(rd.relName, status);
+  if (status != OK) {
+    cerr << __FILE__ << "(" << __LINE__ << ") " << "Error calling InsertFileScan()" << endl;
+    return status;
+  }
+  
+  int records = 0;
   int width = 0;
   for(int i = 0; i < attrCnt; i++) {
-    width += attrs[i].attrLen;
+    width = width + attrs[i].attrLen;
   }
   
   // create a record for constructing the tuple
   char *record;
-  record = new char [width];
-  if (!record) return INSUFMEM;
+  if (!(record = new char [width])) return INSUFMEM;
   
-  int nbytes;
+  int len;
   Record rec;
-  int records = 0;
-  while((nbytes = (int) read(fd, record, width)) == width) {
+  while((len = (int)read(fd, record, width)) == width) {
     RID rid;
     rec.data = record;
     rec.length = width;
     status = iFile.insertRecord(rec, rid);
     if (status!=OK) {
+      cerr << __FILE__ << "(" << __LINE__ << ") " << "Error calling iFile.insertRecord()" << endl;
       return status;
     }
     records++;
@@ -78,4 +86,3 @@ const Status UT_Load(const string & relation, const string & fileName)
   
   return OK;
 }
-

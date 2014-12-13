@@ -12,14 +12,13 @@ using namespace std;
 
 
 //
-// Retrieves and prints information from the catalogs about the for
-// the user. If no relation is given (relation.empty() is true), then
-// it lists all the relations in the database, along with the width in
-// bytes of the relation, the number of attributes in the relation,
-// and the number of attributes that are indexed.  If a relation is
-// given, then it lists all of the attributes of the relation, as well
-// as its type, length, and offset, whether it's indexed or not, and
-// its index number.
+// Retrieves and prints information from the catalogs about the for the
+// user. If no relation is given (relation is NULL), then it lists all
+// the relations in the database, along with the width in bytes of the
+// relation, the number of attributes in the relation, and the number of
+// attributes that are indexed.  If a relation is given, then it lists
+// all of the attributes of the relation, as well as its type, length,
+// and offset, whether it's indexed or not, and its index number.
 //
 // Returns:
 // 	OK on success
@@ -29,7 +28,7 @@ using namespace std;
 const Status RelCatalog::help(const string & relation)
 {
   Status status;
-  RelDesc rd;
+  RelDesc rel;
   AttrDesc *attrs;
   int attrCnt;
   
@@ -37,29 +36,36 @@ const Status RelCatalog::help(const string & relation)
     return UT_Print(RELCATNAME);
   }
   
-  // get relation data
-  if ((status = getInfo(relation, rd)) != OK) {
+  status = getInfo(relation, rel);
+  if (status!=OK) {
     return status;
   }
   
-  // get attribute data
-  if ((status = attrCat->getRelInfo(relation, attrCnt, attrs)) != OK) {
+  status = attrCat->getRelInfo(relation, attrCnt, attrs);
+  if (status!=OK) {
     return status;
   }
   
-  // print relation information
+  cout << "Relation name: " << rel.relName << endl
+       << "Number of attributes: " << rel.attrCnt << endl;
   
-  cout << "Relation name: "
-  << rd.relName << " ("
-  << rd.attrCnt << " attributes)" << endl;
-  
-  for(int i = 0; i < attrCnt; i++) {
+  printf("Attribute Name     Offset     Type    Length\n");
+  for (int i = 0; i < attrCnt; i++) {
     Datatype t = (Datatype) attrs[i].attrType;
-    printf("%16.16s   %3d   %c   %3d\n",
-           attrs[i].attrName,
-           attrs[i].attrOffset,
-           (t == INTEGER ? 'i' : (t == FLOAT ? 'f' : 's')),
-           attrs[i].attrLen);
+   
+    string typeName;
+    switch (t) {
+      case INTEGER:
+        typeName = "int";
+        break;
+      case FLOAT:
+        typeName = "float";
+      default:
+        typeName = "string";
+        break;
+    }
+    
+    printf("%14s  %9d   %6s  %8d\n",  attrs[i].attrName,  attrs[i].attrOffset,  typeName.c_str(),  attrs[i].attrLen);
   }
   
   free(attrs);

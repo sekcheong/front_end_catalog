@@ -1,7 +1,6 @@
 #include "catalog.h"
 #include "query.h"
 
-
 /*
  * Deletes records from a specified relation.
  *
@@ -9,61 +8,56 @@
  * 	OK on success
  * 	an error code otherwise
  */
-
 const Status QU_Delete(const string & relation,
                        const string & attrName,
                        const Operator op,
                        const Datatype type,
-                       const char *attrValue)
-{
-  
+                       const char *attrValue) {
   
   Status status = OK;
-  HeapFileScan hfs = HeapFileScan(relation, status);
-  
-  if (status!=OK) {
-    return status;
-  }
-  
   RID rid;
   Record rec;
   AttrDesc attrInfo;
   
   const char *filter;
+
+  int valI;
+  float valF;
   if (type == INTEGER) {
-    int val = atoi(attrValue);
-    filter = (char *) &val;
+    valI = atoi(attrValue);
+    filter = (char *) &valI;
   }
   else if (type == FLOAT) {
-    float val = atof(attrValue);
-    filter = (char *) &val;
+    valF = atof(attrValue);
+    filter = (char *) &valF;
   }
   else {
     filter = attrValue;
   }
+  
+  HeapFileScan hfs = HeapFileScan(relation, status);
   
   status = attrCat->getInfo(relation, attrName, attrInfo);
   if (status != OK) {
     return status;
   }
   
-  status = hfs.startScan(attrInfo.attrOffset, attrInfo.attrLen,
-                         type, filter, op);
+  status = hfs.startScan(attrInfo.attrOffset, attrInfo.attrLen, type, filter, op);
   if (status != OK) {
     return status;
   }
-  
-  // find the record to delete
+  // Find the record, and delete it.
   while ((hfs.scanNext(rid)) == OK) {
     status = hfs.getRecord(rec);
     if (status != OK) {
       return status;
     }
+    
     status = hfs.deleteRecord();
     if (status != OK) {
       return status;
     }
   }
   
-  return OK;
+  return status;
 }
